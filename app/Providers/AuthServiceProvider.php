@@ -2,8 +2,13 @@
 
 namespace WebCoding\Providers;
 
+use WebCoding\Models\Activity;
+use WebCoding\Models\ActivityComment;
+use WebCoding\Policies\ActivityPolicy;
+use WebCoding\Policies\ActivityCommentPolicy;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -13,7 +18,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        'WebCoding\Model' => 'WebCoding\Policies\ModelPolicy',
+        Activity::class         =>  ActivityPolicy::class,
+        ActivityComment::class  =>  ActivityCommentPolicy::class,
     ];
 
     /**

@@ -1,5 +1,4 @@
 <?php
-
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -14,51 +13,94 @@
 /*
  * Pages principales
  */
-Route::get('/', ['uses' => 'FrontController@index', 'as' => 'front.index']);
 
-/**
- * Recherche
- */
-Route::post('search/users', ['uses' => 'SearchController@usersResults', 'as' => 'search.users']);
+Route::group(['namespace' => 'Site'], function() {
+
+    Route::get('/', ['uses' => 'FrontController@index', 'as' => 'front.index']);
+
+    /**
+     * Recherche
+     */
+    Route::get('search/users', ['uses' => 'SearchController@users', 'as' => 'search.users.index']);
+    Route::post('search/users', ['uses' => 'SearchController@users', 'as' => 'search.users']);
+
+});
 
 /*
  * Utilisateurs
  */
-Route::get('user/{username}', ['uses' => 'Users\ProfileController@profile', 'as' => 'user.view'])->where('username', '[a-zA-Z0-9]+');
-Route::get('user/{username}/contacts', ['uses' => 'Users\ProfileController@friends', 'as' => 'user.friends'])->where('username', '[a-zA-Z0-9]+');
+
+Route::group(['namespace' => 'Users', 'prefix' => 'users'], function() {
+
+    Route::get('/', ['uses' => 'ProfileController@index', 'as' => 'users.index']);
+    Route::get('{username}', ['uses' => 'ProfileController@profile', 'as' => 'user.view'])->where('username', '[a-zA-Z0-9]+');
+    Route::get('{username}/contacts', ['uses' => 'ProfileController@friends', 'as' => 'user.friends'])->where('username', '[a-zA-Z0-9]+');
+
+});
 
 /*
  * Visiteurs uniquement
  */
-Route::group(['middleware' => 'guest'], function() {
+Route::group(['middleware' => 'guest', 'namespace' => 'Auth'], function() {
     /*
      * Inscription / Connexion
      */
-    Route::get('signup', ['uses' => 'Auth\AuthController@getSignup', 'as' => 'auth.signup']);
-    Route::post('signup', ['uses' => 'Auth\AuthController@postSignup', 'as' => 'auth.signup']);
-    Route::get('signin', ['uses' => 'Auth\AuthController@getSignin', 'as' => 'auth.signin']);
-    Route::post('signin', ['uses' => 'Auth\AuthController@postSignin', 'as' => 'auth.signin']);
+    Route::get('signup', ['uses' => 'AuthController@getSignup', 'as' => 'auth.signup']);
+    Route::post('signup', ['uses' => 'AuthController@postSignup', 'as' => 'auth.signup']);
+    Route::get('signin', ['uses' => 'AuthController@getSignin', 'as' => 'auth.signin']);
+    Route::post('signin', ['uses' => 'AuthController@postSignin', 'as' => 'auth.signin']);
 });
 
-/*
- * Utilisateurs connectés
- */
 Route::group(['middleware' => 'auth'], function() {
-    /*
-     * Profil utilisateur
-     */
-    Route::get('profile/edit', ['uses' => 'Users\ProfileController@editAccount', 'as' => 'profile.edit']);
-    Route::get('profile/edit/password', ['uses' => 'Users\ProfileController@editPassword', 'as' => 'profile.edit.password']);
-    Route::get('profile/edit/infos', ['uses' => 'Users\ProfileController@editInfos', 'as' => 'profile.edit.infos']);
-    Route::post('profile/edit', ['uses' => 'Users\ProfileController@updateAccount', 'as' => 'profile.update']);
-    Route::post('profile/edit/password', ['uses' => 'Users\ProfileController@updatePassword', 'as' => 'profile.update.password']);
-    Route::post('profile/edit/infos', ['uses' => 'Users\ProfileController@updateInfos', 'as' => 'profile.update.infos']);
 
-    //  Contacts
-    Route::get('contacts', ['uses' => 'FriendsController@index', 'as' => 'friends.index']);
+    /*
+     * Edition du profil
+     */
+    Route::group(['prefix' => 'profile', 'namespace' => 'Users'], function() {
+
+        Route::get('edit', ['uses' => 'ProfileController@editAccount', 'as' => 'profile.edit']);
+        Route::get('edit/password', ['uses' => 'ProfileController@editPassword', 'as' => 'profile.edit.password']);
+        Route::get('edit/infos', ['uses' => 'ProfileController@editInfos', 'as' => 'profile.edit.infos']);
+        Route::post('edit', ['uses' => 'ProfileController@updateAccount', 'as' => 'profile.update']);
+        Route::post('edit/password', ['uses' => 'ProfileController@updatePassword', 'as' => 'profile.update.password']);
+        Route::post('edit/infos', ['uses' => 'ProfileController@updateInfos', 'as' => 'profile.update.infos']);
+
+    });
+
+    /**
+     * Gestion des contacts
+     */
+    Route::group(['namespace' => 'Users', 'prefix' => 'contacts'], function() {
+
+        Route::get('/', ['uses' => 'FriendsController@index', 'as' => 'friends.index']);
+        Route::get('add/{username}', ['uses' => 'FriendsController@add', 'as' => 'friends.add'])->where('username', '[a-zA-Z0-9]+');
+        Route::get('accept/{username}', ['uses' => 'FriendsController@accept', 'as' => 'friends.accept'])->where('username', '[a-zA-Z0-9]+');
+
+    });
+
+    /**
+     * Activités
+     */
+    Route::group(['namespace' => 'Timeline'], function() {
+
+        Route::resource('activity', 'ActivitiesController');
+        Route::resource('reply', 'ActivitiesCommentsController', ['only' => ['store', 'update', 'destroy']]);
+        Route::get('activity/{activity}/comments', ['uses' => 'ActivitiesCommentsController@comments', 'as' => 'activity.comments']);
+
+    });
 
     //  Déconnexion
     Route::get('signout', ['uses' => 'Auth\AuthController@getSignOut', 'as' => 'auth.signout']);
+
 });
 
+    /*
+     * Activites
+     */
+
+    //Route::post('activity/{activity}/reply', ['uses' => 'ActivitiesCommentsController@create', 'as' => 'activity.reply']);
+
+    //Route::get('activity/{id}', ['uses' => 'ActivitiesController@show', 'as' => 'activity.get']);
+    //Route::post('activity', ['uses' => 'ActivitiesController@store', 'as' => 'activity.store']);
+    //Route::delete('activity', ['uses' => 'ActivitiesController@destroy', 'as' => 'activity.destroy']);
 

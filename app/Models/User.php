@@ -51,7 +51,7 @@ class User extends Model implements AuthenticatableContract,
      */
     public function newsComments()
     {
-        return $this->hasMany(NewsCOmments::class);
+        return $this->hasMany(NewsComments::class);
     }
 
     /**
@@ -63,6 +63,63 @@ class User extends Model implements AuthenticatableContract,
     {
         return $this->hasMany(News::class);
     }
+
+    /**
+     * Actions liées au membre
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function actions()
+    {
+        return $this->hasMany(Action::class);
+    }
+
+    /**
+     * Publications du membre
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function activities()
+    {
+        return $this->hasMany(Activity::class);
+    }
+
+    /**
+     * Commentaires de publications liés à l'utilisateur
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function activitiesComs()
+    {
+        return $this->hasMany(ActivityComment::class);
+    }
+
+    /**
+     * Likes associés à l'utilisateur
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function likes()
+    {
+        return $this->morphMany(Like::class, 'like');
+    }
+
+    // ----------------------------------//
+    //------------ Likes Relations ------//
+    // ----------------------------------//
+
+    public function hasLikedActivity(Activity $activity)
+    {
+        return $activity->likes
+            ->where('likeable_id', $activity->id)
+            ->where('likeable_type', get_class($activity))
+            ->where('user_id', $this->id)
+            ->count();
+    }
+
+    // ----------------------------------//
+    //------------ Friends Relations ----//
+    // ----------------------------------//
 
     /**
      * Relations avec "Mes amis"
@@ -94,6 +151,28 @@ class User extends Model implements AuthenticatableContract,
         return $this->friendsOfMine()->wherePivot('accepted', true)->get()->merge(
             $this->friendOf()->wherePivot('accepted', true)->get()
         );
+    }
+
+    /**
+     * Derniers amis ajoutés
+     *
+     * @param $limit
+     * @return mixed
+     */
+    public function lastFriends($limit)
+    {
+        return $this->friendsOfMine()
+            ->wherePivot('accepted', true)
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get()
+            ->merge(
+                $this->friendOf()
+                    ->wherePivot('accepted', true)
+                    ->orderBy('created_at', 'desc')
+                    ->limit($limit)
+                    ->get()
+            );
     }
 
     /**
@@ -191,6 +270,19 @@ class User extends Model implements AuthenticatableContract,
     }
 
     /**
+     * Retourne le prénom ou le pseudonyme d'un utilisateur
+     *
+     * @return string
+     */
+    public function getNameAttribute()
+    {
+        if( empty($this->lastname) ) {
+            return ucfirst($this->username);
+        }
+        return ucfirst($this->lastname);
+    }
+
+    /**
      * Retourne l'avatar d'un membre
      *
      * @param string $size
@@ -226,6 +318,11 @@ class User extends Model implements AuthenticatableContract,
         return Date::parse($value)->diffForHumans();
     }
 
+    /**
+     * Informations minimalistes pour le profil
+     *
+     * @return mixed|string
+     */
     public function getProfessionalAttribute()
     {
         if( !empty($this->location) && !empty($this->job) ) {

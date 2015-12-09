@@ -3,10 +3,10 @@
         <div class="panel-heading text-center">
             <img src="{{ asset('assets/img/demo/card1.jpg') }}">
             @if( isset($canAdd) && $canAdd )
-            <button class="btn btn-success btn-ar btn-sm right" role="button"><i class="fa fa-user-plus"></i> Ajouter</button>
+            <a href="{{ route('friends.add', ['username' => $u->username]) }}" class="btn btn-success btn-ar btn-sm right" role="button"><i class="fa fa-user-plus"></i> Ajouter</a>
             @elseif( isset($accept) && $accept )
             <a href="#" class="btn btn-danger btn-ar btn-sm" role="button"><i class="fa fa-times"></i> Refuser</a>
-            <a href="#" class="btn btn-success btn-ar btn-sm" role="button"><i class="fa fa-check"></i> Accepter</a>
+            <a href="{{ route('friends.accept', ['username' => $u->username]) }}" class="btn btn-success btn-ar btn-sm" role="button"><i class="fa fa-check"></i> Accepter</a>
             @endif
         </div>
         <div class="panel-figure">

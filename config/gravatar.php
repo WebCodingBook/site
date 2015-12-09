@@ -15,6 +15,9 @@ return array(
     'medium' => array (
         'size'   => 150,
     ),
+    'comment'   =>  [
+        'size'  =>  50,
+    ],
     'full'  =>  array(
         'size'  =>  150,
     )

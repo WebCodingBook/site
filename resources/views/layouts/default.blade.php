@@ -4,6 +4,7 @@
     <meta charset="UTF-8"/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
 
     <title>@yield('title') :: Web Coding Book</title>
 
@@ -168,11 +169,10 @@
             </div>
         </aside>
         @endif
-
-        <footer id="footer">
-            <p>&copy; {{ Date::now()->format('Y') }} <a href="#">Web Coding Book</a> - Tous Droits Réservés<br /><br/> Réalisé avec <i class="fa fa-heart text-danger"></i> par Alexandre Ribes, <a href="#">Développeur Web sur Perpignan</a></p>
-        </footer>
     </div>
+    <footer id="footer">
+        <p>&copy; {{ Date::now()->format('Y') }} <a href="#">Web Coding Book</a> - Tous Droits Réservés<br /><br/> Réalisé avec <i class="fa fa-heart em-danger"></i> par Alexandre Ribes, <a href="#">Développeur Web sur Perpignan</a></p>
+    </footer>
 </div>
 
 <div class="sb-slidebar sb-right">
@@ -212,11 +212,35 @@
     <a href="#header"><i class="fa fa-chevron-up"></i></a>
 </div>
 
+<div class="modal fade" tabindex="-1" role="dialog" id="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-ar btn-primary" data-dismiss="modal">Fermer la fenêtre</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="ajax-modal"></div>
+<div id="ajax-loader"><i class="fa fa-spinner fa-spin"></i></div>
+
 <script src="{{ asset('js/vendors.js') }}" type="text/javascript"></script>
 <script src="{{ asset('js/app.js') }}" type="text/javascript"></script>
 <script src="{{ asset('js/index.js') }}" type="text/javascript"></script>
 <script src="{{ asset('js/sweetalert.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('js/main.js') }}" type="text/javascript"></script>
 @include('sweet::alert')
+<script type="text/javascript">
+
+</script>
 @yield('js')
 </body>
 </html>

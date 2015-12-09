@@ -8,13 +8,14 @@ use Illuminate\Http\Request;
 use Auth;
 use WebCoding\Http\Requests;
 use WebCoding\Http\Controllers\Controller;
+use WebCoding\Models\Activity;
 use WebCoding\Models\User;
 
 class ProfileController extends Controller
 {
     public function index()
     {
-        $users = User::newest()->enabled()->paginate(15);
+        $users = User::latest()->enabled()->paginate(15);
         return view('users.index', compact('users'));
     }
 
@@ -30,8 +31,12 @@ class ProfileController extends Controller
         if( !$user ) {
             return new ModelNotFoundException('Cet utilisateur n\'exite pas');
         }
+        $activities = Activity::with('user', 'comments')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->paginate(10);
 
-        return view('users.user_view')->with('user', $user);
+        return view('users.user_view', compact('user', 'activities'));
     }
 
     /**

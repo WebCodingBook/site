@@ -1,5 +1,33 @@
 @extends('users.user_layout')
 
+@if( Auth::check() && Auth::user()->id == $user->id)
+    @section('title', 'Mes contacts')
+@else
+    @section('title',  'Contacts de "' . $user->full_name . '"')
+@endif
+
+@section('header')
+
+    @include('partials.header', [
+        'title' =>  'Contacts de "' . $user->full_name . '"',
+        'navs'  =>  [
+            0   =>  [
+                'title' =>  'Utilisateurs',
+                'link'  =>  route('users.index')
+            ],
+            1   =>  [
+                'title' =>  $user->full_name,
+                'link'  =>  route('user.view', $user->username),
+            ],
+            2   =>  [
+                'title' =>  'Ses contacts',
+                'link'  =>  '#'
+            ]
+        ]
+    ])
+
+@endsection
+
 @section('profile')
 <div class="container">
     <div class="clearfix"></div>

@@ -4,7 +4,7 @@
 
 @section('content')
     @include('partials.header', [
-        'title' =>  'Résultats pour votre recherche "' . Request::input('search_user') . '"',
+        'title' =>  'Rechercher un utilisateur',
         'navs'  =>  [
             0   =>  [
                 'title' =>  'Recherche',
@@ -15,7 +15,7 @@
 
     <div class="container">
 
-        <h1 class="section-title text-center no-margin-top">Rechercher un utilisateur</h1>
+        <h1 class="section-title text-center margin-top-20">Rechercher un utilisateur</h1>
         <div class="panel panel-border">
             <div class="panel-body">
                 <form method="post" action="{{ route('search.users') }}">
@@ -31,7 +31,7 @@
         </div>
         <div class="row">
             @if( !empty($users) )
-                @foreach( $users as $user )
+                @foreach( $users as $u )
                     @include('partials.users.user_card')
                 @endforeach
             @else
@@ -39,6 +39,8 @@
             @endif
         </div>
 
+        @if( $users )
         {!! $users->render() !!}
+        @endif
     </div>
 @stop

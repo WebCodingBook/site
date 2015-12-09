@@ -2,6 +2,8 @@
 
 namespace WebCoding\Providers;
 
+use Date;
+use Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +15,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Blade::directive('datetime', function($expression) {
+            //$date = Date::parse($expression)->format('d F Y H:i');
+            return "<?php echo with{$expression}->format('d F Y \à H:i'); ?>";
+        });
     }
 
     /**

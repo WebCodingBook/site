@@ -1,48 +1,45 @@
 @extends('users.user_layout')
 
+@if( Auth::check() && Auth::user()->id == $user->id)
+    @section('title', 'Mon fil d\'actualité')
+@else
+    @section('title',  'Fil d\'actualité de "' . $user->full_name . '"')
+@endif
+
+@section('header')
+
+    @include('partials.header', [
+        'title' =>  'Fil d\'actualité de "' . $user->full_name . '"',
+        'navs'  =>  [
+            0   =>  [
+                'title' =>  'Utilisateurs',
+                'link'  =>  '#'
+            ],
+            1   =>  [
+                'title' =>  $user->full_name,
+                'link'  =>  '',
+            ]
+        ]
+    ])
+
+@endsection
+
 @section('profile')
     <div class="container">
         <div class="clearfix"></div>
         <div class="row">
             <div class="col-md-8">
-                <h2 class="right-line no-margin-top">Activité récente</h2>
+                <h2 class="right-line no-margin-top">Activitées récentes</h2>
                 <ul class="timeline-2">
                     @if( Auth::check() && Auth::user()->id === $user->id )
-                    <li class="wow fadeInLeft">
-                        <time class="timeline-time" datetime="">{{ Date::now()->format('d/m/Y') }} <span>{{ Date::now()->format('F') }}</span></time>
-                        <i class="timeline-2-point"></i>
-                        <div class="panel panel-default">
-                            <div class="panel-heading"><i class="fa fa-comment-o"></i> Poster une nouvelle activité</div>
-                            <div class="panel-body">
-                                {!! Form::open(['class' => 'form-vertical']) !!}
-                                {!! Form::textarea('comment', null, ['class' => 'form-control', 'rows' => 3]) !!}
-                                {!! Form::submit('Poster votre nouvelle activité', ['class' => 'btn btn-ar btn-success btn-block']) !!}
-                                {!! Form::close() !!}
-                            </div>
-                        </div>
-                    </li>
+                    @include('activities.form')
                     @endif
-                    <li class="wow fadeInLeft">
-                        <time class="timeline-time" datetime="">14/1/2012 <span>Junuary</span></time>
-                        <i class="timeline-2-point"></i>
-                        <div class="panel panel-default">
-                            <div class="panel-heading"><i class="fa fa-comment-o"></i> Comment in <a href="#">Title post or article</a></div>
-                            <div class="panel-body">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci, illum aspernatur placeat eveniet ullam modi asperiores perspiciatis labore animi odio ea dicta consectetur similique. Soluta officiis facilis velit sunt rem.</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li  class="wow fadeInLeft">
-                        <time class="timeline-time" datetime="">31/5/2014 <span>May</span></time>
-                        <i class="timeline-2-point"></i>
-                        <div class="panel panel-primary">
-                            <div class="panel-heading"><i class="fa fa-picture-o"></i> Post an Image</div>
-                            <div class="video">
-                                <img src="{{ asset('assets/img/demo/office2.jpg') }}" alt="" width="100%" class="img-responsive">
-                            </div>
-                        </div>
-                    </li>
-                </ul>
+
+                    @each('activities.activity_li_post', $activities, 'activity')
+
+                <div class="text-center">
+                    {!! $activities->render() !!}
+                </div>
             </div>
             <div class="col-md-4">
                 <h2 class="right-line no-margin-top">Informations</h2>
@@ -73,25 +70,19 @@
                     </div>
                 </div>
                 <h2 class="right-line no-margin-top">Derniers contacts</h2>
-                @if( $user->friends()->count() )
+                @forelse( $user->lastFriends(3) as $friend )
                 <div class="media">
-                    <a class="pull-left" href="#"><img class="img-responsive" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MCIgaGVpZ2h0PSI3MCI+PHJlY3Qgd2lkdGg9IjcwIiBoZWlnaHQ9IjcwIiBmaWxsPSIjM2E1YTk3Ii8+PHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMzUiIHk9IjM1IiBzdHlsZT0iZmlsbDojZmZmO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjEycHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NzB4NzA8L3RleHQ+PC9zdmc+" /></a>
-                    <h4 class="media-heading">Ribes Alexandre</h4>
-                    <p><small>France, Perpignan</small></p>
+                    <a class="pull-left" href="{{ route('user.view', $friend->username) }}"><img class="img-responsive" src="{{ $friend->avatar() }}" /></a>
+                    <h4 class="media-heading">{{ $friend->full_name }}</h4>
+                    @if( empty($friend->country) || empty($friend->city) )
+                    <p><small><i class="fa fa-calendar"></i> {{ $friend->created_at }}</small></p>
+                    @else
+                    <p><small><i class="fa fa-map-marker"></i> {{ $friend->country }}, {{ $friend->city }}</small></p>
+                    @endif
                 </div>
-                <div class="media">
-                    <a class="pull-left" href="#"><img class="img-responsive" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MCIgaGVpZ2h0PSI3MCI+PHJlY3Qgd2lkdGg9IjcwIiBoZWlnaHQ9IjcwIiBmaWxsPSIjM2E1YTk3Ii8+PHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMzUiIHk9IjM1IiBzdHlsZT0iZmlsbDojZmZmO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjEycHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NzB4NzA8L3RleHQ+PC9zdmc+" /></a>
-                    <h4 class="media-heading">Ribes Alexandre</h4>
-                    <p><small>France, Perpignan</small></p>
-                </div>
-                <div class="media">
-                    <a class="pull-left" href="#"><img class="img-responsive" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MCIgaGVpZ2h0PSI3MCI+PHJlY3Qgd2lkdGg9IjcwIiBoZWlnaHQ9IjcwIiBmaWxsPSIjM2E1YTk3Ii8+PHRleHQgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMzUiIHk9IjM1IiBzdHlsZT0iZmlsbDojZmZmO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjEycHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NzB4NzA8L3RleHQ+PC9zdmc+" /></a>
-                    <h4 class="media-heading">Ribes Alexandre</h4>
-                    <p><small>Développeur Web <br/> France, Perpignan</small></p>
-                </div>
-                @else
+                @empty
                 <p class="text-center">Aucun contact, <a href="#">Ajoutez le</a> à vos contacts</p>
-                @endif
+                @endforelse
                 <h2 class="right-line">Dernière photo</h2>
                 <div class="panel panel-primary animated fadeInDown animation-delay-8">
                     <div class="panel-heading"><i class="fa fa-play-circle"></i>Titre de la photo</div>
@@ -111,5 +102,14 @@
         </div>
     </div>
 
+@stop
+
+@section('js')
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+
+    });
+    </script>
 
 @stop

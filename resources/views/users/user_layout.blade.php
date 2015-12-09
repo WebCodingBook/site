@@ -1,13 +1,4 @@
 @extends('layouts.default')
-@if( Auth::check() )
-    @if( $user->id != Auth::user()->id) )
-    @section('title',  'Fil d\'actualité de "' . $user->full_name . '"')
-@else
-    @section('title',  'Fil d\'actualité de "' . $user->full_name . '"')
-@endif
-@else
-    @section('title', 'Mon fil d\'actualité')
-@endif
 
 @section('content')
     <header class="profile-header">
@@ -40,22 +31,8 @@
                 </div>
             </div>
         </div>
-        @if( Auth::check() )
-            @if( $user->id != Auth::user()->id )
-                @include('partials.header', [
-                    'title' =>  'Fil d\'actualité de "' . $user->full_name . '"',
-                    'navs'  =>  [
-                        0   =>  [
-                            'title' =>  'Utilisateurs',
-                            'link'  =>  '#'
-                        ],
-                        1   =>  [
-                            'title' =>  $user->full_name,
-                            'link'  =>  '',
-                        ]
-                    ]
-                ])
-            @endif
+        @if( Auth::check() && $user->id != Auth::user()->id )
+        @yield('header')
         @endif
     </header>
     <nav class="nav-profile">
@@ -67,17 +44,18 @@
                     <li><a href="#"><i class="fa fa-user"></i> <span>A propos</span></a></li>
                     <li><a href="#"><i class="fa fa-picture-o"></i> <span>Photos</span></a></li>
                     <li><a href="#"><i class="fa fa-video-camera"></i> <span>Vidéos</span></a></li>
-                    @if( Auth::user()->id != $user->id )
+
+                    @if( Auth::check() && Auth::user()->id != $user->id )
                         <li><a{!! Html::isActive('user.friends') !!} href="{{ route('user.friends', ['username' => $user->username]) }}"><i class="fa fa-users"></i> <span>Contacts</span></a></li>
 
                         @if( Auth::user()->hasFriendRequestPending($user) )
-                        <li><a href="#" class="disabled"><i class="fa fa-user-plus em-warning"></i> <span class="em-warning">Demande envoyée</span></a></li>
+                        <li id="request-sent"><a href="#" class="disabled"><i class="fa fa-user-plus em-warning"></i> <span class="em-warning">Demande envoyée</span></a></li>
                         @elseif( Auth::user()->hasFriendRequestReceived($user) )
-                        <li><a href="#"><i class="fa fa-user-plus em-success"></i> <span class="em-success">Accepter</span></a> </li>
+                        <li id="accept-request"><a href="{{ route('friends.accept', ['username' => $user->username]) }}"><i class="fa fa-user-plus em-success"></i> <span class="em-success">Accepter</span></a> </li>
                         @elseif( Auth::user()->isFriendWith($user) )
                         <li><a href="#" class="disabled"><i class="fa fa-code-fork em-success"></i> <span class="em-success">En contact</span></a> </li>
                         @else
-                        <li><a href="#"><i class="fa fa-user-plus"></i> <span>Ajouter</span></a></li>
+                        <li id="send-request"><a href="{{ route('friends.add', ['username' => $user->username]) }}"><i class="fa fa-user-plus"></i> <span>Ajouter</span></a></li>
                         @endif
                     @else
                     <li><a href="{{ route('friends.index') }}"><i class="fa fa-users"></i> <span>Mes contacts</span></a> </li>
@@ -88,5 +66,9 @@
     </nav>
 
     @yield('profile')
+
+@stop
+
+@section('js')
 
 @stop

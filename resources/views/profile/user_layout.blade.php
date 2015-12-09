@@ -17,7 +17,7 @@
         ]
     ])
 
-    <section class="container">
+    <section class="container margin-top-20">
         <div class="row">
             <div class="col-md-3">
                 @include('partials.users.profile_menu')
