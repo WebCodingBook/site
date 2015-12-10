@@ -2,6 +2,8 @@ var WebCoding;
 
 WebCoding = {
 
+    isAjaxModal: false,
+
     init: function () {
         this.Basic.init();
         this.Components.init();
@@ -62,7 +64,6 @@ WebCoding = {
 
             var $ajaxLoader = $('#ajax-loader');
             var $ajaxModal = $('#ajax-modal');
-            var isAjaxModal = false;
 
 			/**
              * Affiche l'ajax modal box (custom css)
@@ -82,7 +83,7 @@ WebCoding = {
             }
 
             $('body').on('click', '[data-target="ajax-modal"]', function() {
-                isAjaxModal = true;
+                WebCoding.isAjaxModal = true;
                 offsetTop = $(document).scrollTop();
                 toLoad = $(this).attr('href');
                 loadContent();
@@ -91,37 +92,26 @@ WebCoding = {
             });
 
             $(document).ajaxStart(function() {
-                if(isAjaxModal) {
+                if(WebCoding.isAjaxModal) {
                     $ajaxLoader.fadeIn(200);
                 }
             });
             $(document).ajaxStop(function() {
-                if(isAjaxModal) {
+                if(WebCoding.isAjaxModal) {
                     $ajaxLoader.fadeOut(200, function(){
                         showNewContent();
                     });
                 }
             });
             $(document).ajaxError(function() {
-                if(isAjaxModal) {
+                if(WebCoding.isAjaxModal) {
                     $ajaxLoader.fadeOut(200);
                 }
             });
 
-			/**
-             * Ferme l'ajax modal box
-             */
-            function closeDetails() {
-                isAjaxModal = false;
-                $('html').removeClass('locked-scrolling');
-                $('body').removeClass('ajax-modal-opened');
-                $(document).scrollTop(offsetTop);
-                $ajaxModal.fadeOut(200);
-                $('#back-top').fadeIn(200);
-            }
-
             $ajaxModal.delegate('*[data-dismiss="close"]','click', function(){
-                closeDetails();
+                $(document).scrollTop(offsetTop);
+                WebCoding.Components.closeModal();
                 return false;
             });
 
@@ -150,6 +140,15 @@ WebCoding = {
                 google.maps.event.trigger(map, 'resize');
             });
         },
+
+        closeModal: function() {
+            WebCoding.isAjaxModal = false;
+            $('html').removeClass('locked-scrolling');
+            $('body').removeClass('ajax-modal-opened');
+            //$(document).scrollTop(offsetTop);
+            $('#ajax-modal').fadeOut(200);
+            $('#back-top').fadeIn(200);
+        }
     },
 
     Actions: {
@@ -159,6 +158,7 @@ WebCoding = {
             this.submitComment();
             this.editComment();
             this.choseActivityType();
+            this.like();
         },
 
         /**
@@ -175,18 +175,20 @@ WebCoding = {
          * Edition d'une activité
          */
         editActivity: function () {
-            $('.timeline-2').on('click', '.edit-form', function (e) {
+            $('body').on('dblclick', '.activity-content', function (e) {
                 e.preventDefault();
-                var content = $('#content_' + $(this).attr('data-id'));
+                var content = $(this);
                 var form = content.parent().find('.form-edit');
 
-                content.toggleClass('hidden');
-                form.toggleClass('show');
+                $(this).hide();
+                form.show();
+
+                WebCoding.Basic.mouseExit(form, $(this));
 
                 $('.activity-edit-submit').on('click', function (e) {
                     e.preventDefault();
                     WebCoding.Ajax.submitActivityData(form, true);
-                })
+                });
             });
         },
 
@@ -234,6 +236,15 @@ WebCoding = {
                     WebCoding.Ajax.submitCommentData(formEdit, true);
                 });
             });
+        },
+
+        like: function() {
+            $('body').on('click', '.like', function(e) {
+                e.preventDefault();
+                var like = $(this);
+                var element = '#' + like.attr('data-element');
+                WebCoding.Ajax.likeAction(like, element);
+            });
         }
 
     },
@@ -278,6 +289,11 @@ WebCoding = {
                             if (data.status == 'success') {
                                 $('#' + data.id).fadeOut();
                                 sweetAlert('Supprimé !', data.message, 'success');
+
+                                if( $('html').hasClass('locked-scrolling') && $('body').hasClass('ajax-modal-opened') ) {
+                                    WebCoding.Components.closeModal();
+                                }
+
                             } else {
                                 sweetAlert('Oups...', data.message, 'error');
                             }
@@ -313,11 +329,15 @@ WebCoding = {
                     if (edit) {
                         var activity = $('#activity_' + data.id);
                         var form = activity.find('.form-edit');
-                        var content = activity.find('#content_' + data.id);
+                        var content = activity.find('.activity-content');
+
+                        console.log(content.text());
+                        console.log(form);
+
                         content.empty().text(data.content);
-                        content.removeClass('hidden').addClass('show');
-                        form.removeClass('show').addClass('hidden');
-                        form.find('textarea').val('');
+                        content.show();
+                        form.hide();
+                        form.find('textarea').val(data.content);
                     } else {
                         textarea.val('');
                         $('.timeline-2').children('li').eq(0).after(data);
@@ -370,6 +390,37 @@ WebCoding = {
                 }
             });
         },
+
+		/**
+         * Permet d'aimer un élément
+         */
+        likeAction: function(like, element) {
+            $.ajax({
+                url: like.attr('href'),
+                type: 'GET',
+                dataType: 'JSON',
+                success: function(response) {
+                    if( response.status == 'success' ) {
+                        var likes = $(element).find('.like-count');
+                        var likesCount = parseInt(likes.text());
+
+                        if( response.type == 'add' ) {
+                            likes.empty().text(likesCount + 1);
+                        } else {
+                            likes.empty().text(likesCount - 1);
+                        }
+
+                    } else {
+                        sweetAlert('Une erreur est survenue', 'error');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText);
+                    console.log(status);
+                    console.log(error);
+                }
+            });
+        }
     }
 };
 

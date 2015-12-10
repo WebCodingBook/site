@@ -31,7 +31,7 @@ class ProfileController extends Controller
         if( !$user ) {
             return new ModelNotFoundException('Cet utilisateur n\'exite pas');
         }
-        $activities = Activity::with('user', 'comments')
+        $activities = Activity::with('user', 'comments', 'likes')
             ->where('user_id', $user->id)
             ->latest()
             ->paginate(10);

@@ -6,3 +6,4 @@ Homestead.json
 /.idea
 /boostrap/cache/*
 .env.*
+/.idea

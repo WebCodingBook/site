@@ -34,38 +34,6 @@ class ActivitiesController extends Controller
     }
 
     /**
-     *  Aime une activité
-     *
-     * @param $id
-     * @return JsonResponse|JsonReponse
-     */
-    public function like($id)
-    {
-        $activity = Activity::findOrFail($id);
-        if( $this->activity->like($activity) ) {
-            return new JsonResponse(['status' => 'success']);
-        } else {
-            return new JsonReponse(['status' => 'failed']);
-        }
-    }
-
-    /**
-     * N'aime plus une activité
-     *
-     * @param $id
-     * @return JsonResponse|JsonReponse
-     */
-    public function unlike($id)
-    {
-        $activity = Activity::findOrFail($id);
-        if( $this->activity->unlike($activity) ) {
-            return new JsonResponse(['status' => 'success']);
-        } else {
-            return new JsonReponse(['status' => 'failed']);
-        }
-    }
-
-    /**
      * Enregistre une nouvelle activité
      *
      * @param Requests\postActivityRequest $request
@@ -78,12 +46,7 @@ class ActivitiesController extends Controller
             'type'      =>  'status'
         ]);
 
-        if( $request->ajax() ) {
-            return view('activities.activity_li_post', compact('activity'));
-        } else {
-            alert()->success('Votre publication a été postée ;)');
-            return redirect()->route('user.view', ['username' => $request->user()->username]);
-        }
+        return view('activities.activity_li_post', compact('activity'));
     }
 
     /**
@@ -101,16 +64,11 @@ class ActivitiesController extends Controller
             'content'   =>  $request->input('content')
         ]);
 
-        if( $request->ajax() ) {
-            return new JsonResponse([
-                'status'    =>  'success',
-                'id'        =>  $activity->id,
-                'content'   =>  $activity->content
-            ]);
-        } else {
-            alert()->success('Publication mise à jour !');
-            return redirect(route('user.view', ['username' => $request->user()->username]) . '#activity_' . $activity->id);
-        }
+        return new JsonResponse([
+            'status'    =>  'success',
+            'id'        =>  $activity->id,
+            'content'   =>  $activity->content
+        ]);
     }
 
     /**

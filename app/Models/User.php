@@ -101,18 +101,24 @@ class User extends Model implements AuthenticatableContract,
      */
     public function likes()
     {
-        return $this->morphMany(Like::class, 'like');
+        return $this->hasMany(Like::class, 'user_id');
     }
 
     // ----------------------------------//
     //------------ Likes Relations ------//
     // ----------------------------------//
 
+    /**
+     * Détermine si l'utilisateur a déjà aimé une activité ou pas
+     *
+     * @param Activity $activity
+     * @return mixed
+     */
     public function hasLikedActivity(Activity $activity)
     {
         return $activity->likes
-            ->where('likeable_id', $activity->id)
-            ->where('likeable_type', get_class($activity))
+            ->where('like_id', $activity->id)
+            ->where('like_type', get_class($activity))
             ->where('user_id', $this->id)
             ->count();
     }
@@ -327,8 +333,12 @@ class User extends Model implements AuthenticatableContract,
     {
         if( !empty($this->location) && !empty($this->job) ) {
             return $this->location . ', ' . $this->job;
+        } else if( !empty($this->location) && empty($this->job) ) {
+            return $this->location;
+        } else if( empty($this->location) && !empty($this->job) ) {
+            return $this->job;
         } else {
-            return $this->getCreatedAtAttribute($this->created_at);
+            return 'Inscrit depuis le ' .$this->getCreatedAtAttribute($this->created_at);
         }
     }
 }

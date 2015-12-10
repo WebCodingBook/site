@@ -19,28 +19,13 @@ class FrontController extends Controller
     public function index()
     {
         if( Auth::check() ) {
-            $activities = Activity::with('user', 'comments')
-                /*
-                ->with(['comments' => function($query) {
-                    $query->with('user')->get();
-                }])
-                */
+            $activities = Activity::with('user', 'comments', 'likes')
                 ->where(function($query) {
                     return $query->where('user_id', Auth::user()->id)
                         ->orWhereIn('user_id', Auth::user()->friends()->lists('id'));
                 })
                 ->latest()
                 ->paginate(10);
-
-            /*
-            foreach( $activities as $activity ) {
-                foreach( $activity->comments as $comment )
-                {
-                    var_dump($comment);
-                }
-            }
-            exit;
-            */
 
             return view('timeline.index', compact('activities'));
         }

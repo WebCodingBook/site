@@ -16,7 +16,7 @@
                 </ul>
 
                 <div class="text-center">
-                    <a href="{{ $activities-> }}" class="load-activities">Vois plus de publications</a>
+                    {!! $activities->render() !!}
                 </div>
             </section>
             <aside class="col-md-4">

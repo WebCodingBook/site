@@ -11,7 +11,6 @@
             @can('delete', $activity)
                 <span class="pull-right">
                 {!! Form::open(['method' => 'DELETE', 'route' => ['activity.destroy', $activity->id]]) !!}
-                    <button class="edit-form" alt="Mettre à jour la publication" title="Mettre à jour la publication" href="#" data-id="{{ $activity->id }}"><i class="fa fa-pencil"></i></button>
                     {!! Form::hidden('id', $activity->id) !!}
                     <button type="submit" class="em-danger delete-confirm" alt="Supprimer la publication" title="Supprimer la publication" data-id="{{ $activity->id }}" data-href="{{ route('activity.destroy', ['activity' => $activity->id]) }}"><i class="fa fa-trash"></i></button>
                     {!! Form::close() !!}
@@ -23,8 +22,8 @@
                 @if( $activity->type == 'status') publié
                 @endif
             </div>
-            <div class="panel-body" id="act_{{ $activity->id }}">
-                <p id="content_{{ $activity->id }}">{{ $activity->content }}</p>
+            <div class="panel-body">
+                <p class="activity-content">{{ $activity->content }}</p>
                 @if( Auth::check() && Gate::forUser(Auth::user())->allows('update', $activity) )
                     {!! Form::model($activity, ['method' => 'PUT', 'class' => 'form-edit', 'route' => ['activity.update', $activity->id]]) !!}
                     <div class="form-group">
@@ -45,7 +44,7 @@
                     <a alt="Partager sur Pinterest" title="Partager sur Pinterest" href="#" class="social-icon-ar sm pinterest"><i class="fa fa-pinterest"></i></a>
                 </p>
                 <ul class="list-inline">
-                    @if( Route::current()->getName() !== 'activity.show' && Gate::forUser(Auth::user())->allows('comment', $activity) )
+                    @if( Route::current()->getName() !== 'activity.show' && Gate::forUser(Auth::user())->allows('comment', $activity ) )
                     <li>
                         <a href="{{ route('activity.comments', ['activity' => $activity->id]) }}" data-target="ajax-modal" class="get-comments">
                             <i class="fa fa-comments em-primary"></i> <span class="total-coms">{{ count($activity->comments) }}</span> commentaire{{ count($activity->comments) > 1 ? 's' : '' }}
@@ -53,7 +52,7 @@
                     </li>
                     @endif
                     <li class="hidden-xs"><i class="fa fa-clock-o"></i> {{ $activity->timestamp }}</li>
-                    <li><a alt="Aimer cette publication" title="Aimer cette publication" class="em-danger" href=""><i class="fa fa-heart"></i></a> 33</li>
+                    <li><span class="like-count">{{ $activity->likes->count() }}</span> <a alt="Aimer cette publication" title="Aimer cette publication" class="like em-danger" href="{{ route('like.activity', ['activity' => $activity->id]) }}" data-element="activity_{{ $activity->id }}"> <i class="fa fa-heart"></i></a></li>
                 </ul>
             </div>
         </div>

@@ -10,7 +10,7 @@
                 <div class="row">
                     <div class="col-md-6 col-md-push-6">
                         <h1 class="animated fadeInDown animation-delay-1">{{ $user->full_name }}</h1>
-                        <h2 class="animated fadeInDown animation-delay-2">Développeur Web</h2>
+                        <h2 class="animated fadeInDown animation-delay-2">{{ $user->professional }}</h2>
                         <div class="profile-header-btn text-center">
                             <a href="#" class="btn btn-ar btn-primary btn-lg animated fadeInLeft animation-delay-2"><i class="fa fa-paper-plane"></i> Le contacter</a>
                             <a href="#" class="btn btn-ar btn-danger btn-lg animated fadeInRight animation-delay-2"><i class="fa fa-download"></i> Télécharger son CV</a>

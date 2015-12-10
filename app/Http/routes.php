@@ -79,13 +79,21 @@ Route::group(['middleware' => 'auth'], function() {
     });
 
     /**
-     * Activités
+     * Routes liées aux activités
      */
     Route::group(['namespace' => 'Timeline'], function() {
 
+        //  Activités
         Route::resource('activity', 'ActivitiesController');
+
+        //  Commentaires
         Route::resource('reply', 'ActivitiesCommentsController', ['only' => ['store', 'update', 'destroy']]);
-        Route::get('activity/{activity}/comments', ['uses' => 'ActivitiesCommentsController@comments', 'as' => 'activity.comments']);
+
+        //  Commentaires d'une activité
+        Route::get('activity/{activity}/comments', ['uses' => 'ActivitiesCommentsController@comments', 'as' => 'activity.comments'])->where('activity', '[0-9]+');
+
+        //  Like d'une activité
+        Route::get('activity/{activity}/like', ['as' => 'like.activity', 'uses' => 'LikesController@like'])->where('activity', '[0-9]+');
 
     });
 
