@@ -26,7 +26,16 @@ class CreateUsersTable extends Migration
             $table->string('job', 60)->nullable();
             $table->string('gender', 1)->nullable();
             $table->string('status', 60)->nullable();
-            $table->string('avatar', 60)->nullable();
+            $table->string('avatar')->nullable();
+            $table->string('cover')->nullable();
+            $table->string('facebook_id')->nullable();
+            $table->string('twitter_id')->nullable();
+            $table->string('google_id')->nullable();
+            $table->string('linkedin_id')->nullable();
+            $table->string('github_id')->nullable();
+            $table->boolean('display_full_name')->default(false);
+            $table->boolean('display_in_search')->default(true);
+            $table->boolean('can_be_contacted')->default(true);
             $table->rememberToken();
             $table->timestamps();
         });

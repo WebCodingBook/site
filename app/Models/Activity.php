@@ -75,4 +75,29 @@ class Activity extends Model
     {
         return Date::parse($this->created_at)->diffForHumans();
     }
+
+    // ----------------------------------//
+    //------------ Évènements -----------//
+    // ----------------------------------//
+
+    /*
+    public static function boot()
+    {
+        parent::boot();
+
+        // A la suppression d'une activité...
+        static::deleting(function($activity) {
+
+            // on supprime tous les commentaires associés
+            foreach( $activity->comments as $comment ) {
+                $comment->delete();
+            }
+
+            //  on supprime tous les "likes" associés
+            foreach( $activity->likes as $like ) {
+                $like->delete();
+            }
+        });
+    }
+    */
 }

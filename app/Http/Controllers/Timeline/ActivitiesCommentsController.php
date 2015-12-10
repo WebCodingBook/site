@@ -2,13 +2,12 @@
 
 namespace WebCoding\Http\Controllers\Timeline;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
-use Psy\Util\Json;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use WebCoding\Http\Requests;
 use WebCoding\Http\Controllers\Controller;
+
 use WebCoding\Models\Activity;
 use WebCoding\Models\ActivityComment;
 
@@ -18,12 +17,13 @@ class ActivitiesCommentsController extends Controller
      * Récupère les commentaires d'une activité
      *
      * @param $activity
-     * @return \Illuminate\Contracts\View\Factory|ModelNotFoundException|\Illuminate\View\View
+     * @return View
      */
     public function comments($activity)
     {
         $act = Activity::findOrFail($activity);
         $comments = ActivityComment::with('user')->where('activity_id', $act->id)->get();
+
         return view('activities.comments', compact('comments', 'act'));
     }
 
@@ -40,7 +40,7 @@ class ActivitiesCommentsController extends Controller
 
         $comment = $activity->comments()->create([
             'user_id'   =>  $request->user()->id,
-            'content'   =>  $request->input('content')
+            'content'   =>  $request->input('content'),
         ]);
 
         return view('activities.comment', compact('comment'));

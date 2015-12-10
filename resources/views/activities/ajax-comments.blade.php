@@ -1,0 +1,1 @@
+@each('activities.comment', $comments, 'comment')

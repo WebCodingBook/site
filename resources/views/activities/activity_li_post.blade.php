@@ -23,7 +23,7 @@
                 @endif
             </div>
             <div class="panel-body">
-                <p class="activity-content">{{ $activity->content }}</p>
+                <p @can('update', $activity)class="activity-content"@endcan>{{ $activity->content }}</p>
                 @if( Auth::check() && Gate::forUser(Auth::user())->allows('update', $activity) )
                     {!! Form::model($activity, ['method' => 'PUT', 'class' => 'form-edit', 'route' => ['activity.update', $activity->id]]) !!}
                     <div class="form-group">
@@ -44,7 +44,7 @@
                     <a alt="Partager sur Pinterest" title="Partager sur Pinterest" href="#" class="social-icon-ar sm pinterest"><i class="fa fa-pinterest"></i></a>
                 </p>
                 <ul class="list-inline">
-                    @if( Route::current()->getName() !== 'activity.show' && Gate::forUser(Auth::user())->allows('comment', $activity ) )
+                    @if( Route::current()->getName() !== 'activity.show' )
                     <li>
                         <a href="{{ route('activity.comments', ['activity' => $activity->id]) }}" data-target="ajax-modal" class="get-comments">
                             <i class="fa fa-comments em-primary"></i> <span class="total-coms">{{ count($activity->comments) }}</span> commentaire{{ count($activity->comments) > 1 ? 's' : '' }}

@@ -15,7 +15,7 @@
     <div class="container">
 
         <div class="center-block logig-form">
-            <div class="panel panel-primary">
+            <div class="panel panel-primary margin-top-80">
                 <div class="panel-heading text-center">Se connecter</div>
                 <div class="panel-body">
                     @include('partials.errors')

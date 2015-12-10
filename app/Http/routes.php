@@ -93,7 +93,10 @@ Route::group(['middleware' => 'auth'], function() {
         Route::get('activity/{activity}/comments', ['uses' => 'ActivitiesCommentsController@comments', 'as' => 'activity.comments'])->where('activity', '[0-9]+');
 
         //  Like d'une activité
-        Route::get('activity/{activity}/like', ['as' => 'like.activity', 'uses' => 'LikesController@like'])->where('activity', '[0-9]+');
+        Route::get('activity/{activity}/like', ['as' => 'like.activity', 'uses' => 'LikesController@likeActivity'])->where('activity', '[0-9]+');
+
+        //  Like d'un commentaire
+        Route::get('reply/{reply}/like', ['uses' => 'LikesController@likeActivityComment', 'as' => 'like.activity.comment'])->where('reply', '[0-9]+');
 
     });
 

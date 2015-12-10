@@ -14,10 +14,13 @@ class CreateFriendsTable extends Migration
     {
         Schema::create('friends', function(Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id');
-            $table->integer('friend_id');
-            $table->boolean('accepted');
+            $table->integer('user_id')->unsigned();
+            $table->integer('friend_id')->unsigned();
+            $table->boolean('accepted')->default(false);
             $table->timestamps();
+
+            $table->index('user_id');
+            $table->index('friend_id');
         });
     }
 

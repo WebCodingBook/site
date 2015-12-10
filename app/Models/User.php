@@ -123,6 +123,21 @@ class User extends Model implements AuthenticatableContract,
             ->count();
     }
 
+    /**
+     * Détermine si l'utilisateur a déjà aimé un commentaire ou pas
+     *
+     * @param ActivityComment $comment
+     * @return mixed
+     */
+    public function hasLikedActivityComment(ActivityComment $comment)
+    {
+        return $comment->likes
+            ->where('like_id', $comment->id)
+            ->where('like_type', get_class($comment))
+            ->where('user_id', $this->id)
+            ->count();
+    }
+
     // ----------------------------------//
     //------------ Friends Relations ----//
     // ----------------------------------//

@@ -29,4 +29,14 @@ class ActivityComment extends Model
     {
         return $this->belongsTo(Activity::class);
     }
+
+    /**
+     * Likes associés au commentaire
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function likes()
+    {
+        return $this->morphMany(Like::class, 'like');
+    }
 }

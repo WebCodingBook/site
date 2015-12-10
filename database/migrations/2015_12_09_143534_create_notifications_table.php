@@ -19,6 +19,10 @@ class CreateNotificationsTable extends Migration
             $table->integer('activity_id')->unsigned()->nullable();
             $table->string('type')->nullable();
             $table->timestamps();
+
+            $table->index('user_to');
+            $table->index('user_from');
+            $table->index('activity_id');
         });
     }
 

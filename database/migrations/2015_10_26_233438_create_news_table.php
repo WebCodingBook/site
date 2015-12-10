@@ -22,6 +22,9 @@ class CreateNewsTable extends Migration
             $table->boolean('published')->default(true);
             $table->boolean('allow_comments')->default(true);
             $table->timestamps();
+
+            $table->index('user_id');
+            $table->index('cat_id');
         });
     }
 

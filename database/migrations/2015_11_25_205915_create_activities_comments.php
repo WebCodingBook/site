@@ -18,6 +18,9 @@ class CreateActivitiesComments extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('activity_id')->unsigned();
             $table->timestamps();
+
+            $table->index('user_id');
+            $table->index('activity_id');
         });
     }
 

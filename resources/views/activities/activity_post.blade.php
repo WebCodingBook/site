@@ -16,7 +16,7 @@
             @endif
         </div>
         <div class="panel-body">
-            <p class="activity-content">{{ $activity->content }}</p>
+            <p @can('update', $activity)class="activity-content"@endcan>{{ $activity->content }}</p>
             @if( Auth::check() && Gate::forUser(Auth::user())->allows('update', $activity) )
                 {!! Form::model($activity, ['method' => 'PUT', 'class' => 'form-edit', 'route' => ['activity.update', $activity->id]]) !!}
                 <div class="form-group">
@@ -45,7 +45,7 @@
                     </li>
                 @endif
                 <li class="hidden-xs"><i class="fa fa-clock-o"></i> {{ $activity->timestamp }}</li>
-                <li><span class="like-count">{{ $activity->likes->count() }}</span> <a alt="Aimer cette publication" title="Aimer cette publication" class="like em-danger" href="{{ route('like.activity', ['activity' => $activity->id]) }}" data-element="activity_{{ $activity->id }}"> <i class="fa fa-heart"></i></a></li>
+                <li><span class="like-count">{{ $activity->likes->count() }}</span> <a alt="Aimer cette publication" title="Aimer cette publication" class="like em-danger" href="{{ route('like.activity', ['activity' => $activity->id]) }}" data-element="like-count"> <i class="fa fa-heart"></i></a></li>
             </ul>
         </div>
     </div>

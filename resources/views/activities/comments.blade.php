@@ -10,7 +10,7 @@
                 <p class="text-center no-comment">Aucun commentaire, soyez le premier à en poster un ;)</p>
             @endforelse
         </div>
-        <hr>
+        @if( Gate::forUser(Auth::user())->allows('comment', $act ) )
         {!! Form::open(['method' => 'POST', 'route' => 'reply.store', 'class' => 'form-activity-reply']) !!}
         <div class="form-group">
             {!! Form::textarea('content', old('content'), ['class' => 'form-control', 'rows' => 3, 'placeholder' => 'Laisser un commentaire...']) !!}
@@ -20,6 +20,7 @@
             {!! Form::submit('Commenter', ['class' => 'btn btn-ar btn-success btn-block submit-comment']) !!}
         </div>
         {!! Form::close() !!}
+        @endif
     </div>
 
     <a href="#" class="ajax-close icon icon-hover icon-primary icon-circle icon-sm" data-dismiss="close"><i class="fa fa-close"></i></a>

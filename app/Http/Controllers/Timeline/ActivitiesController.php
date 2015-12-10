@@ -81,6 +81,8 @@ class ActivitiesController extends Controller
         $activityId = $activity->id;
         $this->authorize('delete', $activity);
 
+        $activity->delete();
+
         return new JsonResponse([
             'id'        => 'activity_' . $activityId,
             'status'    => 'success',

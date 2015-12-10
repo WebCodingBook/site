@@ -20,6 +20,9 @@ class CreateNewsCommentsTable extends Migration
             $table->boolean('published')->defaul(false);
             //$table->softDeletes();
             $table->timestamps();
+
+            $table->index('news_id');
+            $table->index('user_id');
         });
     }
 

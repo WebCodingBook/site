@@ -84,7 +84,7 @@ WebCoding = {
 
             $('body').on('click', '[data-target="ajax-modal"]', function() {
                 WebCoding.isAjaxModal = true;
-                offsetTop = $(document).scrollTop();
+                //offsetTop = $(document).scrollTop();
                 toLoad = $(this).attr('href');
                 loadContent();
                 $('body').addClass('ajax-modal-opened');
@@ -110,7 +110,7 @@ WebCoding = {
             });
 
             $ajaxModal.delegate('*[data-dismiss="close"]','click', function(){
-                $(document).scrollTop(offsetTop);
+                //$(document).scrollTop(offsetTop);
                 WebCoding.Components.closeModal();
                 return false;
             });
@@ -148,7 +148,7 @@ WebCoding = {
             //$(document).scrollTop(offsetTop);
             $('#ajax-modal').fadeOut(200);
             $('#back-top').fadeIn(200);
-        }
+        },
     },
 
     Actions: {
@@ -159,6 +159,7 @@ WebCoding = {
             this.editComment();
             this.choseActivityType();
             this.like();
+            this.paginate();
         },
 
         /**
@@ -238,12 +239,26 @@ WebCoding = {
             });
         },
 
+		/**
+         * Click d'un like
+         */
         like: function() {
             $('body').on('click', '.like', function(e) {
                 e.preventDefault();
                 var like = $(this);
-                var element = '#' + like.attr('data-element');
+                var element = like.attr('data-element');
                 WebCoding.Ajax.likeAction(like, element);
+            });
+        },
+
+		/**
+         * Click d'une pagination
+         */
+        paginate: function() {
+
+            $('body').on('click', '.pagination a', function(e) {
+                e.preventDefault();
+                WebCoding.Ajax.getComments($(this).attr('href'));
             });
         }
 
@@ -290,8 +305,9 @@ WebCoding = {
                                 $('#' + data.id).fadeOut();
                                 sweetAlert('Supprimé !', data.message, 'success');
 
-                                if( $('html').hasClass('locked-scrolling') && $('body').hasClass('ajax-modal-opened') ) {
+                                if( $('html').hasClass('locked-scrolling') && $('body').hasClass('ajax-modal-opened') && deleteConfirm.attr('data-delete') != 'comment' ) {
                                     WebCoding.Components.closeModal();
+                                    $('#ajax-loader').hide();
                                 }
 
                             } else {
@@ -326,13 +342,17 @@ WebCoding = {
                 url: form.attr('action'),
                 data: form.serialize(),
                 success: function (data) {
-                    if (edit) {
-                        var activity = $('#activity_' + data.id);
-                        var form = activity.find('.form-edit');
-                        var content = activity.find('.activity-content');
+                    if( edit ) {
 
-                        console.log(content.text());
-                        console.log(form);
+                        if( WebCoding.isAjaxModal ) {
+                            var container = $('#ajax-modal .section .container .panel');
+                            var form = container.find('.form-edit');
+                            var content = container.find('.activity-content');
+                        } else {
+                            var activity = $('#activity_' + data.id);
+                            var form = activity.find('.form-edit');
+                            var content = activity.find('.activity-content');
+                        }
 
                         content.empty().text(data.content);
                         content.show();
@@ -357,6 +377,15 @@ WebCoding = {
          * @param edit  boolean
          */
         submitCommentData: function (form, edit) {
+
+            var formGroup = form.find('.form-group');
+            var textarea = formGroup.children('textarea');
+
+            if (formGroup.hasClass('has-error')) {
+                formGroup.removeClass('has-error');
+                formGroup.find('.block-helper').remove();
+            }
+
             $.ajax({
                 method: form.attr('method'),
                 url: form.attr('action'),
@@ -401,7 +430,12 @@ WebCoding = {
                 dataType: 'JSON',
                 success: function(response) {
                     if( response.status == 'success' ) {
-                        var likes = $(element).find('.like-count');
+
+                        if( element == 'like-count') {
+                            likes = $('#ajax-modal').find('.' + element).eq(0);
+                        } else {
+                            var likes = $('#' + element).find('.like-count');
+                        }
                         var likesCount = parseInt(likes.text());
 
                         if( response.type == 'add' ) {
@@ -420,7 +454,33 @@ WebCoding = {
                     console.log(error);
                 }
             });
-        }
+        },
+
+        getComments: function(link) {
+
+            var page = link.split('page=')[1];
+
+            $.ajax({
+                url: link,
+                data: {type: 'paginate'},
+                success: function(data) {
+                    var comments = $('#ajax-modal').find('.comments');
+                    var pagination = comments.find('.pagination');
+                    console.log(pagination);
+                    $.each(pagination.find('li'), function() {
+                        $(this).removeClass('active');
+                    })
+                    comments.empty()
+                    comments.html(data);
+
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText);
+                    console.log(status);
+                    console.log(error);
+                }
+            })
+        },
     }
 };
 
