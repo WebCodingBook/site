@@ -1,8 +1,6 @@
 <?php
 namespace WebCoding\Repositories;
 
-use Alert;
-use Illuminate\Http\RedirectResponse;
 use WebCoding\Models\User;
 
 /**

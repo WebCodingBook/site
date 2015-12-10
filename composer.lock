@@ -515,16 +515,16 @@
         },
         {
             "name": "intervention/image",
-            "version": "2.3.2",
+            "version": "2.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/image.git",
-                "reference": "1124ff3c6298f0dcf9edf9156623904d7a5c3428"
+                "reference": "a67ee32df0c6820cc6e861ad4144ee0ef9c74aa3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/image/zipball/1124ff3c6298f0dcf9edf9156623904d7a5c3428",
-                "reference": "1124ff3c6298f0dcf9edf9156623904d7a5c3428",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/a67ee32df0c6820cc6e861ad4144ee0ef9c74aa3",
+                "reference": "a67ee32df0c6820cc6e861ad4144ee0ef9c74aa3",
                 "shasum": ""
             },
             "require": {
@@ -573,7 +573,7 @@
                 "thumbnail",
                 "watermark"
             ],
-            "time": "2015-08-16 15:31:59"
+            "time": "2015-11-30 17:03:21"
         },
         {
             "name": "jakub-onderka/php-console-color",
@@ -2395,7 +2395,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Zizaco/entrust/zipball/3a768eb52300ec4efe9d6a6685b9bf0db6a50ffd",
+                "url": "https://api.github.com/repos/Zizaco/entrust/zipball/be28aa634c44551ae5187894c903094a8ce8baee",
                 "reference": "3a768eb52300ec4efe9d6a6685b9bf0db6a50ffd",
                 "shasum": ""
             },

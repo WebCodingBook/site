@@ -2,9 +2,6 @@
 
 namespace WebCoding\Models;
 
-use Date;
-use Gravatar;
-
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -12,12 +9,14 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use WebCoding\Presenters\DatePresenter;
+use WebCoding\Presenters\UserPresenter;
 
 class User extends Model implements AuthenticatableContract,
                                     AuthorizableContract,
                                     CanResetPasswordContract
 {
-    use Authenticatable, Authorizable, CanResetPassword;
+    use Authenticatable, Authorizable, CanResetPassword, DatePresenter, UserPresenter;
 
     /**
      * The database table used by the model.
@@ -273,87 +272,4 @@ class User extends Model implements AuthenticatableContract,
         return (bool) $this->friends()->where('id', $user->id)->count();
     }
 
-    // ----------------------------------//
-    //------------ Presenters -----------//
-    // ----------------------------------//
-
-    /**
-     * Retourne le nom complet d'un utilisateur (si possible)
-     *
-     * @return string
-     */
-    public function getFullNameAttribute()
-    {
-        if( $this->firstname && $this->lastname ) {
-            return ucfirst($this->firstname) . ' ' . ucfirst($this->lastname);
-        }
-        return ucfirst($this->username);
-    }
-
-    /**
-     * Retourne le prénom ou le pseudonyme d'un utilisateur
-     *
-     * @return string
-     */
-    public function getNameAttribute()
-    {
-        if( empty($this->lastname) ) {
-            return ucfirst($this->username);
-        }
-        return ucfirst($this->lastname);
-    }
-
-    /**
-     * Retourne l'avatar d'un membre
-     *
-     * @param string $size
-     * @return string
-     */
-    public function avatar($size = 'default')
-    {
-        if( Gravatar::exists($this->email) ) {
-            return Gravatar::get($this->email, $size);
-        }
-        return asset('images/anonymous.jpg');
-    }
-
-    /**
-     * Date de création formatée
-     *
-     * @param $value
-     * @return mixed
-     */
-    public function getCreatedAtAttribute($value)
-    {
-        return Date::parse($value)->format('l j F Y');
-    }
-
-    /**
-     * Date de mise à jour formatée
-     *
-     * @param $value
-     * @return mixed
-     */
-    public function getUpdatedAtAttribute($value)
-    {
-        return Date::parse($value)->diffForHumans();
-    }
-
-    /**
-     * Informations minimalistes pour le profil
-     *
-     * @return mixed|string
-     */
-    public function getProfessionalAttribute()
-    {
-        if( !empty($this->location) && !empty($this->job) ) {
-            return $this->location . ', ' . $this->job;
-        } else if( !empty($this->location) && empty($this->job) ) {
-            return $this->location;
-        } else if( empty($this->location) && !empty($this->job) ) {
-            return $this->job;
-        } else {
-            return 'Inscrit depuis le ' .$this->getCreatedAtAttribute($this->created_at);
-        }
-    }
 }

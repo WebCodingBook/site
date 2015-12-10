@@ -3,12 +3,28 @@
 namespace WebCoding\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use WebCoding\Presenters\DatePresenter;
 
 class ActivityComment extends Model
 {
+    use DatePresenter;
+
     protected $table = 'activities_comments';
 
     protected $fillable = ['content', 'user_id', 'activity_id', 'created_at', 'updated_at'];
+
+    /**
+     * Évènements
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        //  On supprime les likes du commentaire
+        ActivityComment::deleting(function($activity) {
+            $activity->likes()->delete();
+        });
+    }
 
     /**
      * Utilisateur associé au commentaire

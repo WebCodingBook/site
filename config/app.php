@@ -151,12 +151,13 @@ return [
          */
         Zizaco\Entrust\EntrustServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
-        GridPrinciples\Friendly\Providers\FriendlyServiceProvider::class,
+        //GridPrinciples\Friendly\Providers\FriendlyServiceProvider::class,
         UxWeb\SweetAlert\SweetAlertServiceProvider::class,
         Creativeorange\Gravatar\GravatarServiceProvider::class,
         Jenssegers\Date\DateServiceProvider::class,
         Cviebrock\EloquentSluggable\SluggableServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class,
     ],
 
     /*
@@ -205,12 +206,15 @@ return [
         'URL'       => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
+
+        //  Addons
         'Gravatar'  => Creativeorange\Gravatar\Facades\Gravatar::class,
         'Alert'     => UxWeb\SweetAlert\SweetAlert::class,
         'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
         'Form'      => Collective\Html\FormFacade::class,
         'Html'      => Collective\Html\HtmlFacade::class,
         'Date'      => Jenssegers\Date\Date::class,
+        'Image'     => Intervention\Image\Facades\Image::class,
         'Debugbar'  => Barryvdh\Debugbar\Facade::class,
     ],
 

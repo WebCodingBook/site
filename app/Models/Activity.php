@@ -4,12 +4,38 @@ namespace WebCoding\Models;
 
 use Date;
 use Illuminate\Database\Eloquent\Model;
+use WebCoding\Presenters\ActivityPresenter;
 
 class Activity extends Model
 {
+    use ActivityPresenter;
+
     protected $table = 'activities';
 
     protected $fillable = ['type', 'content'];
+
+    /**
+     * Evènements
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        // A la suppression d'une activité...
+        Activity::deleting(function($activity) {
+            //  On supprime les likes
+            $activity->likes()->delete();
+
+            //  On supprime les likes des commentaires associés
+            foreach( $activity->comments as $comment ) {
+                $comment->likes()->delete();
+            }
+        });
+    }
+
+    // ----------------------------------//
+    //------------ Relations ------------//
+    // ----------------------------------//
 
     /**
      * Utilisateur lié à l'activité
@@ -50,54 +76,4 @@ class Activity extends Model
     {
         return $this->morphMany(Like::class, 'like');
     }
-
-    /**
-     * Retourne le mois de publication
-     *
-     * @return mixed
-     */
-    public function getMonthAttribute()
-    {
-       return Date::parse($this->created_at)->format('F');
-    }
-
-    /**
-     * Retourne la date de publication formatée
-     *
-     * @return mixed
-     */
-    public function getDateAttribute()
-    {
-        return Date::parse($this->created_at)->format('d/m/Y');
-    }
-
-    public function getTimestampAttribute()
-    {
-        return Date::parse($this->created_at)->diffForHumans();
-    }
-
-    // ----------------------------------//
-    //------------ Évènements -----------//
-    // ----------------------------------//
-
-    /*
-    public static function boot()
-    {
-        parent::boot();
-
-        // A la suppression d'une activité...
-        static::deleting(function($activity) {
-
-            // on supprime tous les commentaires associés
-            foreach( $activity->comments as $comment ) {
-                $comment->delete();
-            }
-
-            //  on supprime tous les "likes" associés
-            foreach( $activity->likes as $like ) {
-                $like->delete();
-            }
-        });
-    }
-    */
 }
