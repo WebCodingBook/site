@@ -21,8 +21,8 @@ class ActivityComment extends Model
         parent::boot();
 
         //  On supprime les likes du commentaire
-        ActivityComment::deleting(function($activity) {
-            $activity->likes()->delete();
+        ActivityComment::deleting(function($comment) {
+            $comment->likes()->delete();
         });
     }
 

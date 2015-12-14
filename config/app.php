@@ -146,9 +146,7 @@ return [
         WebCoding\Providers\RouteServiceProvider::class,
         WebCoding\Providers\MacroServiceProvider::class,
 
-        /**
-         * AddOns Services providers
-         */
+        //  Packages Services providers
         Zizaco\Entrust\EntrustServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         //GridPrinciples\Friendly\Providers\FriendlyServiceProvider::class,

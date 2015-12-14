@@ -61,9 +61,11 @@ Route::group(['middleware' => 'auth'], function() {
         Route::get('edit', ['uses' => 'ProfileController@editAccount', 'as' => 'profile.edit']);
         Route::get('edit/password', ['uses' => 'ProfileController@editPassword', 'as' => 'profile.edit.password']);
         Route::get('edit/infos', ['uses' => 'ProfileController@editInfos', 'as' => 'profile.edit.infos']);
+        Route::get('edit/perso', ['uses' => 'ProfileController@editPerso', 'as' => 'profile.edit.perso']);
         Route::post('edit', ['uses' => 'ProfileController@updateAccount', 'as' => 'profile.update']);
         Route::post('edit/password', ['uses' => 'ProfileController@updatePassword', 'as' => 'profile.update.password']);
         Route::post('edit/infos', ['uses' => 'ProfileController@updateInfos', 'as' => 'profile.update.infos']);
+        Route::post('edit/perso', ['uses' => 'ProfileController@updatePerso', 'as' => 'profile.update.perso']);
 
     });
 

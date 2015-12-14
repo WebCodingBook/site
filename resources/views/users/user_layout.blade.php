@@ -2,6 +2,14 @@
 
 @section('content')
     <header class="profile-header">
+        <div class="bg-image">
+            @if( !empty($user->cover) )
+            <img src="{{ asset('uploads/users/covers/full/' . $user->cover) }}">
+            @else
+            <img src="{{ asset('assets/imgs/back_lead.jpg') }}">
+            @endif
+        </div>
+
         @if( Auth::check() && Auth::user()->id == $user->id )
             <div class="pull-left"><a class="button button-large button-plain button-border button-circle" href="{{ route('profile.edit') }}" alt="Modifier mon profil" title="Modifier mon profil"><i class="fa fa-pencil"></i></a></div>
         @endif

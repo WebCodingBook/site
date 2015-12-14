@@ -10,12 +10,13 @@ use WebCoding\Http\Requests;
 use WebCoding\Http\Controllers\Controller;
 use WebCoding\Models\Activity;
 use WebCoding\Models\User;
+use WebCoding\Services\ImageService;
 
 class ProfileController extends Controller
 {
     public function index()
     {
-        $users = User::latest()->enabled()->paginate(15);
+        $users = User::latest()->paginate(15);
         return view('users.index', compact('users'));
     }
 
@@ -57,12 +58,12 @@ class ProfileController extends Controller
     /**
      * Edition du compte
      *
-     * @return $this
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function editAccount()
     {
         $user = User::findOrFail(Auth::user()->id);
-        return view('profile.user_account')->with('user', $user);
+        return view('profile.user_account', compact('user'));
     }
 
     /**
@@ -171,11 +172,23 @@ class ProfileController extends Controller
         return redirect()->route('profile.edit');
     }
 
+    /**
+     * Edition de la couverture
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function editPerso()
     {
-        return view('profile.user_perso');
+        $cover = Auth::user()->cover;
+        return view('profile.user_perso')->with('cover', $cover);
     }
 
+    /**
+     * Mise à jour de la personnalisation
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function updatePerso(Request $request)
     {
         if( $request->input('user_id') != Auth::user()->id ) {
@@ -183,32 +196,27 @@ class ProfileController extends Controller
         }
 
         $this->validate($request, [
-            'avatar'    =>  'image',
-            'cover'     =>  'image'
+            'cover'     =>  'mimes:jpg,jpeg,png|max:2000'
         ]);
 
-        //  On supprime l'avatar du membre avant nouvel upload
-        if( !empty($request->input('avatar')) ) {
-
-            if( is_file(public_path() . 'uploads/avatars/' . Auth::user()->avatar) ) {
-                unlink(public_path() . 'uploads/avatars/' . Auth::user()->avatar);
-            }
-
-            if( is_file(public_path() . 'uploads/avatars/mini/' . Auth::user()->avatar) ) {
-                unlink(public_path() . 'uploads/avatars/mini' . Auth::user()->avatar);
-            }
-        }
-
         //  On supprime la couverture
-        if( !empty($request->input('cover')) ) {
-            if( is_file(public_path() . 'uploads/covers/mini/' . Auth::user()->cover) ) {
-                unlink(public_path() . 'uploads/cover/mini' . Auth::user()->cover);
-            }
+        if( $request->hasFIle('cover') && $request->file('cover')->isValid() ) {
 
-            if( is_file(public_path() . 'uploads/covers/' . Auth::user()->cover) ) {
-                unlink(public_path() . 'uploads/cover' . Auth::user()->cover);
-            }
+            $coverPath = public_path() . '/uploads/users/covers';
+            $cover = new ImageService($coverPath);
+            $cover->delete(Auth::user()->cover, ['full', 'mini', 'thumb']);
+            $cover->prepare($request->file('cover'), Auth::user()->username . '-cover');
+            $cover->resize('150', 150, 'thumb');
+
+            $saveCover = $cover->getFile(0);
+
+            Auth::user()->update([
+                'cover'    =>  $saveCover['name'],
+            ]);
         }
+
+        alert()->success('Vos informations ont été mises à jour !');
+        return redirect()->route('profile.edit');
     }
 
     public function editSkills()

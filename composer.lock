@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fef1af05b70d1b55a135d058221d7b93",
-    "content-hash": "9eb4915a525654cb8e8a022d9a923110",
+    "hash": "3b4b93960f803498aef0610da18e512f",
+    "content-hash": "4141ae7d1a681519ee1e80e9c8425f92",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -426,6 +426,58 @@
                 "string"
             ],
             "time": "2014-12-20 21:24:13"
+        },
+        {
+            "name": "greggilbert/recaptcha",
+            "version": "2.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/greggilbert/recaptcha.git",
+                "reference": "121fd8ef288a311f288d36020c5a07baa312f53a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/greggilbert/recaptcha/zipball/121fd8ef288a311f288d36020c5a07baa312f53a",
+                "reference": "121fd8ef288a311f288d36020c5a07baa312f53a",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~5.1",
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.1-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/migrations"
+                ],
+                "psr-4": {
+                    "Greggilbert\\Recaptcha\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Greg Gilbert",
+                    "email": "greg@greg-gilbert.com"
+                }
+            ],
+            "description": "reCAPTCHA Validator for Laravel 5",
+            "homepage": "http://github.com/greggilbert/recaptcha",
+            "keywords": [
+                "captcha",
+                "laravel",
+                "laravel5",
+                "recaptcha"
+            ],
+            "time": "2015-09-19 13:57:56"
         },
         {
             "name": "gridprinciples/friendly",

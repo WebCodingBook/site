@@ -30,7 +30,7 @@ class User extends Model implements AuthenticatableContract,
      *
      * @var array
      */
-    protected $fillable = ['username', 'email', 'password', 'firstname', 'lastname', 'city', 'country', 'department', 'birthday', 'job'];
+    protected $fillable = ['username', 'email', 'password', 'firstname', 'lastname', 'city', 'country', 'department', 'birthday', 'job', 'avatar', 'cover', 'status', 'gender', 'facebook_id', 'google_id', 'twitter_id', 'linkedin_id', 'github_id', 'display_full_name', 'display_in_search', 'can_be_contacted'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -271,5 +271,6 @@ class User extends Model implements AuthenticatableContract,
     {
         return (bool) $this->friends()->where('id', $user->id)->count();
     }
+
 
 }

@@ -5399,7 +5399,6 @@ a.feature-icon:hover {
 /* ---------------------------------------------------- */
 .profile-header {
   min-height: 350px;
-  background-image: url("../assets/img/back_profile.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   color: #fff;

@@ -50,7 +50,9 @@ WebCoding = {
         backgrounds: function () {
             $('.bg-image').each(function () {
                 var src = $(this).children('img').attr('src');
-                $(this).css('background-image', 'url(' + src + ')').children('img').hide();
+                //$(this).css('background-image', 'url(' + src + ')').children('img').hide();
+                $(this).parent().css('background-image', 'url(' + src + ')');
+                $(this).children('img').hide();
             });
         },
 
@@ -141,6 +143,9 @@ WebCoding = {
             });
         },
 
+		/**
+         * Fermeture d'une modal
+         */
         closeModal: function() {
             WebCoding.isAjaxModal = false;
             $('html').removeClass('locked-scrolling');
@@ -159,7 +164,6 @@ WebCoding = {
             this.editComment();
             this.choseActivityType();
             this.like();
-            this.paginate();
         },
 
         /**
@@ -250,17 +254,6 @@ WebCoding = {
                 WebCoding.Ajax.likeAction(like, element);
             });
         },
-
-		/**
-         * Click d'une pagination
-         */
-        paginate: function() {
-
-            $('body').on('click', '.pagination a', function(e) {
-                e.preventDefault();
-                WebCoding.Ajax.getComments($(this).attr('href'));
-            });
-        }
 
     },
 
@@ -454,32 +447,6 @@ WebCoding = {
                     console.log(error);
                 }
             });
-        },
-
-        getComments: function(link) {
-
-            var page = link.split('page=')[1];
-
-            $.ajax({
-                url: link,
-                data: {type: 'paginate'},
-                success: function(data) {
-                    var comments = $('#ajax-modal').find('.comments');
-                    var pagination = comments.find('.pagination');
-                    console.log(pagination);
-                    $.each(pagination.find('li'), function() {
-                        $(this).removeClass('active');
-                    })
-                    comments.empty()
-                    comments.html(data);
-
-                },
-                error: function(xhr, status, error) {
-                    console.log(xhr.responseText);
-                    console.log(status);
-                    console.log(error);
-                }
-            })
         },
     }
 };
